@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import 'bulma/bulma.sass';
+import classNames from 'classnames';
+
+import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 
-import classNames from 'classnames';
 import { PostsList } from './components/PostsList';
 import { PostDetails } from './components/PostDetails';
 import { UserSelector } from './components/UserSelector';
@@ -15,6 +15,7 @@ import { getPosts } from './components/api/posts';
 import { Loader } from './components/Loader';
 import { Comment } from './types/Comment';
 import { deleteComment, getComments } from './components/api/comments';
+import { useEffect, useState } from 'react';
 
 export const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -29,16 +30,21 @@ export const App: React.FC = () => {
   const [isCommentsLoading, setIsCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<Errors | null>(null);
 
+  const hasNoPosts =
+    selectedUser && posts.length === 0 && !postError && !isPostsLoading;
+  const hasPosts =
+    selectedUser && posts.length > 0 && !postError && !isPostsLoading;
+
   useEffect(() => {
-    getUsers()
-      .then((res: User[]) => setUsers(res))
+    getUsers().then((res: User[]) => setUsers(res));
   }, []);
 
   useEffect(() => {
     if (!selectedUser) {
       setPosts([]);
+
       return;
-    };
+    }
 
     setPostError(null);
     setIsPostsLoading(true);
@@ -47,13 +53,14 @@ export const App: React.FC = () => {
       .then((res: Post[]) => setPosts(res))
       .catch(() => setPostError(Errors.SmthWentWrong))
       .finally(() => setIsPostsLoading(false));
-  }, [selectedUser])
+  }, [selectedUser]);
 
   useEffect(() => {
     if (!selectedPost) {
       setComments([]);
+
       return;
-    };
+    }
 
     setCommentsError(null);
     setIsCommentsLoading(true);
@@ -66,11 +73,12 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     setSelectedPost(null);
-  }, [selectedUser])
+  }, [selectedUser]);
 
   const handleDelete = (commentId: number) => {
     setComments((currentComments: Comment[]) =>
-      currentComments.filter(comment => comment.id !== commentId));
+      currentComments.filter(comment => comment.id !== commentId),
+    );
 
     deleteComment(commentId);
   };
@@ -86,15 +94,12 @@ export const App: React.FC = () => {
                   users={users}
                   selectedUser={selectedUser}
                   onSelect={setSelectedUser}
-
                 />
               </div>
 
               <div className="block" data-cy="MainContent">
                 {!selectedUser && (
-                  <p data-cy="NoSelectedUser">
-                    No user selected
-                  </p>
+                  <p data-cy="NoSelectedUser">No user selected</p>
                 )}
 
                 {selectedUser && isPostsLoading && <Loader />}
@@ -105,15 +110,16 @@ export const App: React.FC = () => {
                     data-cy="PostsLoadingError"
                   >
                     Something went wrong!
-                  </div>)}
+                  </div>
+                )}
 
-                {selectedUser && posts.length === 0 && !postError && !isPostsLoading && (
+                {hasNoPosts && (
                   <div className="notification is-warning" data-cy="NoPostsYet">
                     No posts yet
                   </div>
                 )}
 
-                {selectedUser && posts.length > 0 && !postError && !isPostsLoading && (
+                {hasPosts && (
                   <PostsList
                     posts={posts}
                     selectedPost={selectedPost}
@@ -122,31 +128,30 @@ export const App: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
 
-          <div
-            data-cy="Sidebar"
-            className={classNames(
-              'tile',
-              'is-parent',
-              'is-8-desktop',
-              'Sidebar',
-              { 'Sidebar--open': selectedPost },
-            )}
-          >
-
-            <div className="tile is-child box is-success ">
-              {selectedPost && (
-                <PostDetails
-                  post={selectedPost}
-                  comments={comments}
-                  isCommentsLoading={isCommentsLoading}
-                  commentsError={commentsError}
-                  selectedPost={selectedPost}
-                  handleDelete={handleDelete}
-                  setComments={setComments}
-                />
+            <div
+              data-cy="Sidebar"
+              className={classNames(
+                'tile',
+                'is-parent',
+                'is-8-desktop',
+                'Sidebar',
+                { 'Sidebar--open': selectedPost },
               )}
+            >
+              <div className="tile is-child box is-success ">
+                {selectedPost && (
+                  <PostDetails
+                    post={selectedPost}
+                    comments={comments}
+                    isCommentsLoading={isCommentsLoading}
+                    commentsError={commentsError}
+                    selectedPost={selectedPost}
+                    handleDelete={handleDelete}
+                    setComments={setComments}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

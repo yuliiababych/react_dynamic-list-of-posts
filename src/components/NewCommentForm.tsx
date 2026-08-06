@@ -14,7 +14,7 @@ type Props = {
   emailError: boolean;
   bodyError: boolean;
   isSubmitting: boolean;
-}
+};
 
 export const NewCommentForm: React.FC<Props> = ({
   userName,
@@ -33,8 +33,7 @@ export const NewCommentForm: React.FC<Props> = ({
   return (
     <form data-cy="NewCommentForm" onSubmit={onSubmit}>
       <div className="field" data-cy="NameField">
-        <label
-          className="label" htmlFor="comment-author-name">
+        <label className="label" htmlFor="comment-author-name">
           Author Name
         </label>
 
@@ -134,9 +133,11 @@ export const NewCommentForm: React.FC<Props> = ({
         <div className="control">
           <button
             type="submit"
-              className={classNames('button is-link', {'is-loading': isSubmitting})}
-              onClick={onSubmit}
-            >
+            className={classNames('button is-link', {
+              'is-loading': isSubmitting,
+            })}
+            onClick={onSubmit}
+          >
             Add
           </button>
         </div>

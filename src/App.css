@@ -10,6 +10,7 @@
     max-width: 0;
   }
 }
+
 .Sidebar--open {
   opacity: 1;
 }

@@ -8,7 +8,11 @@ type Props = {
   onSelect: (user: User) => void;
 };
 
-export const UserSelector: React.FC<Props> = ({ users, selectedUser, onSelect }) => {
+export const UserSelector: React.FC<Props> = ({
+  users,
+  selectedUser,
+  onSelect,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -20,7 +24,10 @@ export const UserSelector: React.FC<Props> = ({ users, selectedUser, onSelect })
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -29,13 +36,13 @@ export const UserSelector: React.FC<Props> = ({ users, selectedUser, onSelect })
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-    }
+    };
   }, []);
 
   return (
     <div
       data-cy="UserSelector"
-      className={classNames('dropdown', { 'is-active' : isOpen })}
+      className={classNames('dropdown', { 'is-active': isOpen })}
       ref={dropdownRef}
     >
       <div className="dropdown-trigger">
@@ -60,11 +67,13 @@ export const UserSelector: React.FC<Props> = ({ users, selectedUser, onSelect })
             <a
               key={user.id}
               href={`#user-${user.id}`}
-              className={classNames('dropdown-item', {'is-active' : user.id === selectedUser?.id})}
+              className={classNames('dropdown-item', {
+                'is-active': user.id === selectedUser?.id,
+              })}
               onClick={() => handleSelect(user)}
             >
-                {user.name}
-              </a>
+              {user.name}
+            </a>
           ))}
         </div>
       </div>
